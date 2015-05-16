@@ -1,0 +1,43 @@
+{
+  "name": "voxbone-voxsms",
+  "author": "Sacha Nacar",
+  "version": "1.0.5",
+  "description": "A nodejs wrapper for Voxbone VoxSMS API",
+  "contributors": [
+    "Sacha Nacar",
+    "Vincent Morsiani",
+    "Torrey Searle",
+    "Antonio Latorre"
+  ],
+  "keywords": [
+    "sms",
+    "voxbone",
+    "API"
+  ],
+  "scripts": {
+    "test": "mocha"
+  },
+    "dependencies": {
+    "request": "~2.55.0",
+    "iconv-lite": "~0.4.8",
+    "node-uuid": "~1.4.3"
+  },
+  "files": [
+    "README.md",
+    "index.js"
+  ],
+  "homepage": "https://developers.voxbone.com/docs/sms/overview",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/voxbone/voxsms-npm"
+  },
+  "bugs": {
+    "url": "https://github.com/voxbone/voxsms-npm/issues"
+  },
+  "license": [
+    {
+      "type": "MIT",
+      "url": "http://www.mit-license.org"
+    }
+  ]
+}
