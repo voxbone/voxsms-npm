@@ -1,7 +1,7 @@
 {
   "name": "voxbone-voxsms",
   "author": "Sacha Nacar",
-  "version": "1.0.5",
+  "version": "1.0.8",
   "description": "A nodejs wrapper for Voxbone VoxSMS API",
   "contributors": [
     "Sacha Nacar",
