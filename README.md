@@ -91,6 +91,9 @@ Available functions:
 * [VoxSMS API Documentation](https://developers.voxbone.com/docs/sms/overview/)
 * [Voxbone Github](https://github.com/voxbone)
 
+## License
+
+[MIT](LICENSE)
 
 [npm-url]: https://npmjs.org/package/voxbone-voxsms
 [downloads-url]: https://npmjs.org/package/voxbone-voxsms
