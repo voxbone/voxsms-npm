@@ -38,12 +38,12 @@ Voxbone.prototype = {
             for (var i = 0; i < fragments.length; ++i) {
               frag = {frag_ref: fragref, frag_total:fragments.length, frag_num: i+1};
               var data ={from:from, msg:fragments[i], frag:frag, delivery_report:dr};
-              sendSMSRequest('https://be.sms.voxbone.com:4443/sms/v1/'+to, data);
+              sendSMSRequest('https://sms.voxbone.com:4443/sms/v1/'+to, data);
             }
         }else{
             frag = null;
             var data = {from:from, msg:msg, frag:frag, delivery_report:dr};
-            sendSMSRequest('https://be.sms.voxbone.com:4443/sms/v1/'+to, data);
+            sendSMSRequest('https://sms.voxbone.com:4443/sms/v1/'+to, data);
         }
     },
 
@@ -62,7 +62,7 @@ Voxbone.prototype = {
     //Delivery Report constructor that passes parameters to the http sendDeliveryRequest request
     sendDeliveryReport: function(transid, orig_destination, orig_from, delivery_status, status_code){
         var data = {orig_from:orig_from, delivery_status:delivery_status, status_code:status_code};
-        sendDeliveryRequest('https://be.sms.voxbone.com:4443/sms/v1/'+orig_destination+'/report/'+transid, data);
+        sendDeliveryRequest('https://sms.voxbone.com:4443/sms/v1/'+orig_destination+'/report/'+transid, data);
     }
 };
 function sendSMSRequest(url, data, callback) {
