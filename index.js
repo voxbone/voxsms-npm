@@ -72,7 +72,8 @@ function sendSMSRequest(url, data, callback) {
     };
     var headers = {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'User-Agent': 'VoxSMS - NPM v1.0.9'
     };
     var auth = {
         'user': credentials.login,
@@ -109,7 +110,8 @@ function sendDeliveryRequest(url, data) {
     };
     var headers = {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'User-Agent': 'VoxSMS - NPM v1.0.9'
     };
     var auth = {
         'user': credentials.login,
