@@ -6,12 +6,16 @@ var uuid = require('node-uuid');
 
 var _api = {
   login: '',
-  password: ''
+  password: '',
+  url : 'https://sms.voxbone.com:4443/sms/v1/'
 };
 
 var Voxbone = function(opts) {
   _api.login = opts.apiLogin;
   _api.password = opts.apiPassword;
+  if(typeof opts.url != 'undefined'){
+    _api.url = opts.url;
+  }  
 };
 
 Voxbone.prototype = {
@@ -38,12 +42,12 @@ Voxbone.prototype = {
             for (var i = 0; i < fragments.length; ++i) {
               frag = {frag_ref: fragref, frag_total:fragments.length, frag_num: i+1};
               var data ={from:from, msg:fragments[i], frag:frag, delivery_report:dr};
-              sendSMSRequest('https://sms.voxbone.com:4443/sms/v1/'+to, data);
+              sendSMSRequest(_api.url+to, data);
             }
         }else{
             frag = null;
             var data = {from:from, msg:msg, frag:frag, delivery_report:dr};
-            sendSMSRequest('https://sms.voxbone.com:4443/sms/v1/'+to, data);
+            sendSMSRequest(_api.url+to, data);
         }
     },
 
@@ -62,7 +66,7 @@ Voxbone.prototype = {
     //Delivery Report constructor that passes parameters to the http sendDeliveryRequest request
     sendDeliveryReport: function(transid, orig_destination, orig_from, delivery_status, status_code){
         var data = {orig_from:orig_from, delivery_status:delivery_status, status_code:status_code};
-        sendDeliveryRequest('https://sms.voxbone.com:4443/sms/v1/'+orig_destination+'/report/'+transid, data);
+        sendDeliveryRequest(_api.url+orig_destination+'/report/'+transid, data);
     }
 };
 function sendSMSRequest(url, data, callback) {
