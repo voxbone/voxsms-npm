@@ -20,11 +20,13 @@
     "dependencies": {
     "request": "~2.55.0",
     "iconv-lite": "~0.4.8",
-    "node-uuid": "~1.4.3"
+    "node-uuid": "~1.4.3",
+    "pkginfo":"~0.3.1"
   },
   "files": [
     "README.md",
-    "index.js"
+    "index.js",
+    "package.json"
   ],
   "homepage": "https://developers.voxbone.com/docs/sms/overview",
   "repository": {

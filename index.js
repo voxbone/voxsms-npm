@@ -1,12 +1,15 @@
 var sendRequest = require('request');
 var iconv = require('iconv-lite');
 var uuid = require('node-uuid');
+var pkginfo = require('pkginfo')(module, 'version');
 
 var _api = {
   login: '',
   password: '',
   url : 'https://sms.voxbone.com:4443/sms/v1/'
 };
+
+var _version = module.exports.version;
 
 var Voxbone = function(opts) {
   _api.login = opts.apiLogin;
@@ -76,7 +79,7 @@ function request(method,url, data){
     var headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'User-Agent': 'VoxSMS - NPM v1.0.9'
+        'User-Agent': 'VoxSMS - NPM '+_version
     };
     var auth = {
         'user': credentials.login,
@@ -91,7 +94,7 @@ function request(method,url, data){
         headers: headers,
         method: method.toUpperCase()
     };
-
+    console.log("User Agent:",headers['User-Agent']);
     sendRequest(options,function (error, response, body) {
         if (!error && (response.statusCode == 200 || response.statusCode == 202)) {
             console.log('[DEBUG]',method,url,'succeeded with HTTP status', response.statusCode);
