@@ -1,6 +1,4 @@
 var sendRequest = require('request');
-var sendResponse = require('request');
-var request = require('request');
 var iconv = require('iconv-lite');
 var uuid = require('node-uuid');
 
@@ -42,12 +40,12 @@ Voxbone.prototype = {
             for (var i = 0; i < fragments.length; ++i) {
               frag = {frag_ref: fragref, frag_total:fragments.length, frag_num: i+1};
               var data ={from:from, msg:fragments[i], frag:frag, delivery_report:dr};
-              sendSMSRequest(_api.url+to, data);
+              request('POST',_api.url+to, data);
             }
         }else{
             frag = null;
             var data = {from:from, msg:msg, frag:frag, delivery_report:dr};
-            sendSMSRequest(_api.url+to, data);
+            request('POST',_api.url+to, data);
         }
     },
 
@@ -66,10 +64,11 @@ Voxbone.prototype = {
     //Delivery Report constructor that passes parameters to the http sendDeliveryRequest request
     sendDeliveryReport: function(transid, orig_destination, orig_from, delivery_status, status_code){
         var data = {orig_from:orig_from, delivery_status:delivery_status, status_code:status_code};
-        sendDeliveryRequest(_api.url+orig_destination+'/report/'+transid, data);
+        request('PUT',_api.url+orig_destination+'/report/'+transid, data);
     }
 };
-function sendSMSRequest(url, data, callback) {
+
+function request(method,url, data){
     var credentials = {
         login: _api.login,
         password: _api.password
@@ -89,54 +88,26 @@ function sendSMSRequest(url, data, callback) {
         url: url,
         body: data,
         json: true,
-        headers: headers
+        headers: headers,
+        method: method.toUpperCase()
     };
-    //Sends the SMS and gets the transaction ID
-    sendRequest.post(options,function (error, response, body) {
+
+    sendRequest(options,function (error, response, body) {
         if (!error && (response.statusCode == 200 || response.statusCode == 202)) {
-            console.log('[DEBUG] SMS sent!');
+            console.log('[DEBUG]',method,url,'succeeded with HTTP status', response.statusCode);
             console.log(response.body);
-        }else if (response.statusCode == 403){
-           console.log('[DEBUG] An error occured while sending the Delivery Report. Authentication error');
+        }else if (!error){
+            console.log('[DEBUG]',method,url,'failed with HTTP status',response.statusCode);
         }else{
-           console.log('[DEBUG] An error occured while sending the SMS.');
-           console.log(error);
-           console.log(body);
-           console.log(response);
+            console.log('[DEBUG] An error occured while sending the request.');
+            console.log(error);
+            console.log(body);
+            console.log(response);
         }
     });
+
 }
 
-function sendDeliveryRequest(url, data) {
-    var credentials = {
-        login: _api.login,
-        password: _api.password
-    };
-    var headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'User-Agent': 'VoxSMS - NPM v1.0.9'
-    };
-    var auth = {
-        'user': credentials.login,
-        'pass': credentials.password,
-        'sendImmediately': false
-    };
-    var options = {
-        auth: auth,
-        json: true,
-        url: url,
-        body: data,
-        headers: headers
-    };
-    sendRequest.put(options,function (error, response, body) {
-        if (!error && (response.statusCode == 200 || response.statusCode == 202)) {
-            console.log('[DEBUG] Delivery Report sent!');
-        }else{
-           console.log('[DEBUG] An error occured while sending the Delivery Report.');
-        }
-    });
-}
 function detectEncoding(msg, fragref){
     var encoding;
     //Prepare encoding message
