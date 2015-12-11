@@ -53,9 +53,9 @@ Voxbone.prototype = {
     },
 
     //Generate a Frag Ref
+    //Frag ref should be a value within [0-65535]
     createFragRef: function (){
-        var ref = Math.floor((Math.random() * 1000000) + 1);
-        return ref;
+        return Math.floor(Math.random() * 65535 );
     },
 
     //Generate a transaction ID
@@ -94,13 +94,13 @@ function request(method,url, data){
         headers: headers,
         method: method.toUpperCase()
     };
-    console.log("User Agent:",headers['User-Agent']);
     sendRequest(options,function (error, response, body) {
         if (!error && (response.statusCode == 200 || response.statusCode == 202)) {
             console.log('[DEBUG]',method,url,'succeeded with HTTP status', response.statusCode);
             console.log(response.body);
         }else if (!error){
             console.log('[DEBUG]',method,url,'failed with HTTP status',response.statusCode);
+            console.log('[DEBUG]',response.body);
         }else{
             console.log('[DEBUG] An error occured while sending the request.');
             console.log(error);
