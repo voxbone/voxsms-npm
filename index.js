@@ -21,7 +21,7 @@ var Voxbone = function(opts) {
 
 Voxbone.prototype = {
     //Delivery Report constructor that passes parameters to the http sendSMSRequest request
-   sendSMS: function(to, from, msg, fragref, dr){
+   sendSMS: function(to, from, msg, fragref, dr, callback){
         var encoding = detectEncoding(msg, fragref);
         var fragLength = getFragLength(msg, encoding, fragref);
         var frag;
@@ -43,12 +43,12 @@ Voxbone.prototype = {
             for (var i = 0; i < fragments.length; ++i) {
               frag = {frag_ref: fragref, frag_total:fragments.length, frag_num: i+1};
               var data ={from:from, msg:fragments[i], frag:frag, delivery_report:dr};
-              request('POST',_api.url+to, data);
+              request('POST',_api.url+to, data, callback);
             }
         }else{
             frag = null;
             var data = {from:from, msg:msg, frag:frag, delivery_report:dr};
-            request('POST',_api.url+to, data);
+            request('POST',_api.url+to, data, callback);
         }
     },
 
@@ -71,7 +71,7 @@ Voxbone.prototype = {
     }
 };
 
-function request(method,url, data){
+function request(method,url, data, callback){
     var credentials = {
         login: _api.login,
         password: _api.password
@@ -94,6 +94,7 @@ function request(method,url, data){
         headers: headers,
         method: method.toUpperCase()
     };
+
     sendRequest(options,function (error, response, body) {
         if (!error && (response.statusCode == 200 || response.statusCode == 202)) {
             console.log('[DEBUG]',method,url,'succeeded with HTTP status', response.statusCode);
@@ -107,6 +108,8 @@ function request(method,url, data){
             console.log(body);
             console.log(response);
         }
+
+        typeof callback === "function" && callback(error, response, body);
     });
 
 }
