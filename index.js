@@ -98,10 +98,16 @@ function request(method,url, data, callback){
     sendRequest(options,function (error, response, body) {
         if (data.frag === null) {
           response.body.final = true;
+          response.body.frag_total = 1;
+          response.body.frag_num = 1;
         } else if (data.frag.frag_total === data.frag.frag_num) {
           response.body.final = true;
+          response.body.frag_total = data.frag.frag_total;
+          response.body.frag_num = data.frag.frag_num;
         } else {
           response.body.final = false;
+          response.body.frag_total = data.frag.frag_total;
+          response.body.frag_num = data.frag.frag_num;
         }
 
         if (!error && (response.statusCode == 200 || response.statusCode == 202)) {
