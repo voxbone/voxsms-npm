@@ -96,12 +96,20 @@ function request(method,url, data, callback){
     };
 
     sendRequest(options,function (error, response, body) {
+        if (data.frag === null) {
+          response.body.final = true;
+        } else if (data.frag.frag_total === data.frag.frag_num) {
+          response.body.final = true;
+        } else {
+          response.body.final = false;
+        }
+
         if (!error && (response.statusCode == 200 || response.statusCode == 202)) {
             console.log('[DEBUG]',method,url,'succeeded with HTTP status', response.statusCode);
-            console.log(response.body);
+            console.log('[DEBUG] response.body : ' + JSON.stringify(response.body));
         }else if (!error){
             console.log('[DEBUG]',method,url,'failed with HTTP status',response.statusCode);
-            console.log('[DEBUG]',response.body);
+            console.log('[DEBUG] response.body : ' + JSON.stringify(response.body));
         }else{
             console.log('[DEBUG] An error occured while sending the request.');
             console.log(error);
