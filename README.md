@@ -1,4 +1,4 @@
-:q# Voxbone VoxSMS
+# Voxbone VoxSMS
 
 The Voxbone VoxSMS module enables you to send/receive SMS and delivery reports from Voxbone numbers.
 
