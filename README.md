@@ -1,4 +1,4 @@
-# Voxbone VoxSMS
+:q# Voxbone VoxSMS
 
 The Voxbone VoxSMS module enables you to send/receive SMS and delivery reports from Voxbone numbers.
 
@@ -14,7 +14,7 @@ To install the Voxbone VoxSMS module and its dependencies, simply run the follow
 1. Add the dependency to your application
 
     `````
-    var Voxbone = require('voxbone');
+    var Voxbone = require('voxbone-voxsms');
     `````
 
 2. Add your credentials
@@ -52,27 +52,31 @@ To install the Voxbone VoxSMS module and its dependencies, simply run the follow
     var fragref = voxbone.createFragRef();
     `````
 
-3. Send SMS with the parameters configured in step 1 (callback function is optional)
+3. Send SMS with the parameters configured in step 1 (success/failure callback functions are optional)
 
     `````
     var sms_sent = false;
-    var success = true;
+    var success = false;
     
-    voxbone.sendSMS(number, from_number, msg, fragref, 'all', function(error, response, body){
-        if (success === false){
-            return;
-        }
+    voxbone.sendSMS(number, from_number, msg, fragref, 'all', function(transaction_id) {
 
-        if (response.statusCode !== 202 && response.statusCode !== 200){
-            console.log("Got error : " + JSON.stringify(error));
-            success = false;
-            return;
-        }
-
-        if (response.body.final === true) {
+        if (frag === null) {
             sms_sent = true;
-            console.log("Total number of SMS sent : "  + response.body.frag_total);
-        }
+	    success = true;
+            console.log("Single SMS sent, transaction ID : "  + transaction_id);
+        } else if (frag.frag_num === frag.frag_total) {
+            sms_sent = true;
+            console.log(frag.frag_num + "/" + frag.frag_total + " SMS sent OK, transaction ID: "  + transaction_id);
+        } else {
+            console.log(frag.frag_num + "/" + frag.frag_total + " SMS sent OK, transaction ID: "  + transaction_id);
+	    }
+     }, function(statusCode, frag) {
+       	    success = false;
+       	    if (frag) {
+       	        console.log(frag.frag_num + "/" + frag.frag_total + " SMS sent OK, transaction ID: "  + transaction_id);
+            } else {
+	            console.log("SMS failed to be sent, error code : " + statusCode);
+	        }
      });
     `````
 
@@ -83,7 +87,7 @@ Available functions:
 1.  Sends an SMS with the parameters configured
 
     ````
-    voxbone.sendSMS(to, from, msg, fragref, dr[, callback]);
+    voxbone.sendSMS(to, from, msg, fragref, dr[, successCB, [, failCB]]);
     ````
 
 2.  Generates a random fragmentation reference used for long messages

@@ -21,10 +21,9 @@ var Voxbone = function(opts) {
 
 Voxbone.prototype = {
     //Delivery Report constructor that passes parameters to the http sendSMSRequest request
-   sendSMS: function(to, from, msg, fragref, dr, callback){
+   sendSMS: function(to, from, msg, fragref, dr, successCB, failCB){
         var encoding = detectEncoding(msg, fragref);
         var fragLength = getFragLength(msg, encoding, fragref);
-        var frag;
         var fragments = [];
         console.log('Encoding: '+encoding+' Frag Length: '+fragLength+' msg length: '+msg.length+' Frag Ref: '+fragref);
         if (msg.length > fragLength){
@@ -39,15 +38,30 @@ Voxbone.prototype = {
         fragments.push(msg);
         }
         console.log(fragments);
-        if(fragments.length > 1){
+
+       if(fragments.length > 1){
             for (var i = 0; i < fragments.length; ++i) {
-              frag = {frag_ref: fragref, frag_total:fragments.length, frag_num: i+1};
+              var frag = {frag_ref: fragref, frag_total:fragments.length, frag_num: i+1};
               var data ={from:from, msg:fragments[i], frag:frag, delivery_report:dr};
+              var callback = (function(error, response, body) {
+                  if (error || response.statusCode >= 300) {
+                      typeof failCB === "function" && failCB(error?error:response.statusCode,frag);
+                  } else {
+                      typeof successCB === "function" && successCB(body.transaction_id,frag);
+                  }
+              });
               request('POST',_api.url+to, data, callback);
             }
         }else{
-            frag = null;
+            var frag = null;
             var data = {from:from, msg:msg, frag:frag, delivery_report:dr};
+            var callback = (function(error, response, body) {
+                if (error || response.statusCode >= 300) {
+                    typeof failCB === "function" && failCB(error?error:response.statusCode,frag);
+                } else {
+                    typeof successCB === "function" && successCB(body.transaction_id,frag);
+                }
+            });
             request('POST',_api.url+to, data, callback);
         }
     },
@@ -65,9 +79,14 @@ Voxbone.prototype = {
     },
 
     //Delivery Report constructor that passes parameters to the http sendDeliveryRequest request
-    sendDeliveryReport: function(transid, orig_destination, orig_from, delivery_status, status_code){
+    sendDeliveryReport: function(transid, orig_destination, orig_from, delivery_status, status_code, isSuccessCB){
         var data = {orig_from:orig_from, delivery_status:delivery_status, status_code:status_code};
-        request('PUT',_api.url+orig_destination+'/report/'+transid, data);
+        var callback = (function(error, response, body) {
+            if (isSuccessCB === "function") {
+                isSuccessCB(!error);
+            }
+        });
+        request('PUT',_api.url+orig_destination+'/report/'+transid, data, callback);
     }
 };
 
