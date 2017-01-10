@@ -52,10 +52,28 @@ To install the Voxbone VoxSMS module and its dependencies, simply run the follow
     var fragref = voxbone.createFragRef();
     `````
 
-3. Send SMS with the parameters configured in step 1
+3. Send SMS with the parameters configured in step 1 (callback function is optional)
 
     `````
-    voxbone.sendSMS(to, from, msg, fragref, dr);
+    var sms_sent = false;
+    var success = true;
+    
+    voxbone.sendSMS(number, from_number, msg, fragref, 'all', function(error, response, body){
+        if (success === false){
+            return;
+        }
+
+        if (response.statusCode !== 202 && response.statusCode !== 200){
+            console.log("Got error : " + JSON.stringify(error));
+            success = false;
+            return;
+        }
+
+        if (response.body.final === true) {
+            sms_sent = true;
+            console.log("Total number of SMS sent : "  + response.body.frag_total);
+        }
+     });
     `````
 
 ## Docs
@@ -65,7 +83,7 @@ Available functions:
 1.  Sends an SMS with the parameters configured
 
     ````
-    voxbone.sendSMS(to, from, msg, fragref, dr);
+    voxbone.sendSMS(to, from, msg, fragref, dr[, callback]);
     ````
 
 2.  Generates a random fragmentation reference used for long messages
