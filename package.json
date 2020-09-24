@@ -18,7 +18,7 @@
     "test": "mocha"
   },
     "dependencies": {
-    "request": "~2.55.0",
+    "request": "~2.88.2",
     "iconv-lite": "~0.4.8",
     "node-uuid": "~1.4.3",
     "pkginfo":"~0.3.1"
